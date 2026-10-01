@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morenas Ritual - Consejo Ancestral</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,600;1,400;1,600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #d4af37;
+            --gold-light: #f3e5ab;
+            --gold-dark: #8c6d23;
+            --bg-wood: #180e08;
+            --parchment: #e2cfa7;
+            --parchment-dark: #b89a68;
+            --text-dark: #21150c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-wood);
+            background-image: radial-gradient(circle, rgba(40, 22, 12, 0.9) 0%, rgba(15, 8, 4, 0.98) 100%);
+            color: var(--text-dark);
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+
+        /* Hojas de Monstera decorativas */
+        .leaf {
+            position: fixed;
+            width: 120px;
+            height: 120px;
+            opacity: 0.25;
+            pointer-events: none;
+            z-index: 1;
+            fill: #1f3a2b;
+        }
+        .leaf-top-left { top: -20px; left: -20px; transform: rotate(45deg); }
+        .leaf-bottom-right { bottom: -20px; right: -20px; transform: rotate(225deg); }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            perspective: 1000px;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+            color: var(--gold-light);
+        }
+
+        .header h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            color: var(--gold);
+        }
+
+        .header p {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.2rem;
+            color: var(--gold-light);
+            margin-top: -2px;
+        }
+
+        /* Carta Flip 3D */
+        .card-container {
+            width: 100%;
+            height: 610px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .card-container.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--gold);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        /* Reverso de la carta */
+        .card-back {
+            background: linear-gradient(135deg, #2b1a10 0%, #120904 100%);
+            border: 3px double var(--gold);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .card-back-pattern {
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            width: 90%;
+            height: 94%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background-image: radial-gradient(var(--gold-dark) 1px, transparent 0);
+            background-size: 16px 16px;
+        }
+
+        .seal-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 2px solid var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: rgba(0,0,0,0.4);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .tap-prompt {
+            color: var(--gold-light);
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            margin-top: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        /* Anverso de la carta */
+        .card-front {
+            background: radial-gradient(circle, var(--parchment) 0%, var(--parchment-dark) 100%);
+            transform: rotateY(180deg);
+            border: 4px double #5c431b;
+            color: var(--text-dark);
+            text-align: center;
+        }
+
+        .card-inner-border {
+            border: 1px solid var(--gold-dark);
+            height: 100%;
+            padding: 15px 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .card-number {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            color: var(--gold-dark);
+            letter-spacing: 3px;
+            font-weight: bold;
+        }
+
+        .card-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: #1a0f08;
+            letter-spacing: 2px;
+            margin: 4px 0 10px 0;
+            border-bottom: 1px solid var(--gold-dark);
+            padding-bottom: 4px;
+            width: 100%;
+        }
+
+        .card-symbol {
+            width: 70px;
+            height: 70px;
+            margin: 5px 0;
+            fill: var(--gold-dark);
+        }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            color: #5c431b;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-top: 8px;
+            margin-bottom: 4px;
+        }
+
+        .card-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.05rem;
+            line-height: 1.35;
+            color: #1a0f08;
+            font-weight: 600;
+        }
+
+        .horoscope-box {
+            background: rgba(35, 22, 13, 0.08);
+            border: 1px solid rgba(140, 109, 35, 0.3);
+            border-radius: 6px;
+            padding: 8px;
+            width: 100%;
+            margin-top: 6px;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            align-items: center;
+        }
+
+        .zodiac-select {
+            background: #23160d;
+            color: var(--gold-light);
+            border: 1px solid var(--gold);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            width: 80%;
+            text-align: center;
+            outline: none;
+        }
+
+        .btn-draw {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: #120904;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            font-size: 0.9rem;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            width: 80%;
+        }
+
+        .btn-draw:active {
+            transform: scale(0.96);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hoja Monstera Fondo Superior -->
+    <svg class="leaf leaf-top-left" viewBox="0 0 24 24"><path d="M12,2C6.48,2,2,6.48,2,12c0,5.52,4.48,10,10,10s10-4.48,10-10C22,6.48,17.52,2,12,2z M11,19.93C7.06,19.43,4,16.07,4,12 c0-0.74,0.11-1.46,0.3-2.14l4.24,7.34L11,19.93z M18,16.5l-3.5-6h6.2C20.2,12.5,19.3,14.7,18,16.5z"/></svg>
+
+    <div class="container">
+        <header class="header">
+            <h1>Morenas Ritual</h1>
+            <p>Oráculo & Consejo Ancestral</p>
+        </header>
+
+        <div class="card-container" id="card" onclick="flipCard()">
+            <!-- REVERSO DE LA CARTA -->
+            <div class="card-face card-back">
+                <div class="card-back-pattern">
+                    <div class="seal-logo">
+                        <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="9"/>
+                            <path d="M12 3a9 9 0 0 0 0 18M12 7a5 5 0 0 1 0 10"/>
+                        </svg>
+                    </div>
+                    <p style="font-family: 'Cinzel', serif; color: var(--gold); letter-spacing: 3px; font-size: 1.1rem;">CONSEJO</p>
+                    <p style="font-family: 'Cormorant Garamond', serif; color: var(--gold-light); font-style: italic;">Ancestral</p>
+                    <p class="tap-prompt">✨ TOCA PARA REVELAR ✨</p>
+                </div>
+            </div>
+
+            <!-- ANVERSO DE LA CARTA (REVELADO) -->
+            <div class="card-face card-front">
+                <div class="card-inner-border">
+                    <div>
+                        <div class="card-number" id="cardNum">ARCANO 0</div>
+                        <h2 class="card-title" id="cardTitle">EL LOCO</h2>
+                    </div>
+
+                    <!-- Icono Místico Central -->
+                    <svg class="card-symbol" viewBox="0 0 24 24" id="cardSymbol">
+                        <path d="M12 2L15 8L22 9L17 14L18.5 21L12 17.5L5.5 21L7 14L2 9L9 8L12 2Z"/>
+                    </svg>
+
+                    <div>
+                        <div class="section-title">✦ Consejo del Universo ✦</div>
+                        <p class="card-text" id="universeAdvice">Cargando mensaje del universo...</p>
+                    </div>
+
+                    <div class="horoscope-box">
+                        <div class="section-title">☾ Recomendación del Horóscopo ☽</div>
+                        <p class="card-text" id="horoscopeAdvice">Selecciona tu signo abajo o lee la energía general.</p>
+                    </div>
+
+                    <p style="font-size: 0.65rem; color: #6b5328; margin-top: 4px; font-family: 'Montserrat', sans-serif;">MORENAS RITUAL • TAROT RITUAL</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <select class="zodiac-select" id="zodiacSelect" onchange="updateHoroscope()">
+                <option value="todos">✨ Selecciona tu Signo Zodiacal</option>
+                <option value="Aries">Aries</option>
+                <option value="Tauro">Tauro</option>
+                <option value="Géminis">Géminis</option>
+                <option value="Cáncer">Cáncer</option>
+                <option value="Leo">Leo</option>
+                <option value="Virgo">Virgo</option>
+                <option value="Libra">Libra</option>
+                <option value="Escorpio">Escorpio</option>
+                <option value="Sagitario">Sagitario</option>
+                <option value="Capricornio">Capricornio</option>
+                <option value="Acuario">Acuario</option>
+                <option value="Piscis">Piscis</option>
+            </select>
+
+            <button class="btn-draw" onclick="drawNewCard(event)">🔮 CONSULTAR OTRA CARTA</button>
+        </div>
+    </div>
+
+    <!-- Hoja Monstera Fondo Inferior -->
+    <svg class="leaf leaf-bottom-right" viewBox="0 0 24 24"><path d="M12,2C6.48,2,2,6.48,2,12c0,5.52,4.48,10,10,10s10-4.48,10-10C22,6.48,17.52,2,12,2z M11,19.93C7.06,19.43,4,16.07,4,12 c0-0.74,0.11-1.46,0.3-2.14l4.24,7.34L11,19.93z M18,16.5l-3.5-6h6.2C20.2,12.5,19.3,14.7,18,16.5z"/></svg>
+
+    <script>
+        const arcanos = [
+            {
+                num: "ARCANO 0",
+                name: "EL LOCO",
+                consejo: "Confía en los nuevos comienzos. Da el salto de fe sin miedo al juicio ajeno; la vida te sostiene.",
+                horoscopo: "Aries, Sagitario y Leo sentirán un impulso transformador hoy. Déjate llevar sin sobrepensar."
+            },
+            {
+                num: "ARCANO I",
+                name: "EL MAGO",
+                consejo: "Tienes absolutamente todas las herramientas necesarias para manifestar lo que deseas. Actúa ahora.",
+                horoscopo: "Géminis y Virgo conectaréis con una claridad mental brillante. Es el momento perfecto para crear."
+            },
+            {
+                num: "ARCANO II",
+                name: "LA SACERDOTISA",
+                consejo: "Escucha tu intuición más profunda. La respuesta no está en el ruido externo, sino en tu silencio.",
+                horoscopo: "Cáncer, Escorpio y Piscis recibirán mensajes clave a través de sueños o corazonadas."
+            },
+            {
+                num: "ARCANO III",
+                name: "LA EMPERATRIZ",
+                consejo: "Abre tus brazos al florecimiento, el placer y la abundancia. Nutre tus proyectos con amor.",
+                horoscopo: "Tauro y Libra vivirán momentos de gran magnetismo personal y disfrute de los sentidos."
+            },
+            {
+                num: "ARCANO IV",
+                name: "EL EMPERADOR",
+                consejo: "Establece límites claros y pon orden en tu imperio interior. La disciplina será tu gran aliada.",
+                horoscopo: "Capricornio y Tauro tomarán el control de decisiones financieras o profesionales importantes."
+            },
+            {
+                num: "ARCANO V",
+                name: "EL SUMO SACERDOTE",
+                consejo: "Busca la sabiduría ancestral y respeta tus rituales. Aprende de la experiencia de tus guías.",
+                horoscopo: "Tauro y Virgo recibirán un consejo valioso de alguien con mayor recorrido espiritual o profesional."
+            },
+            {
+                num: "ARCANO VI",
+                name: "LOS ENAMORADOS",
+                consejo: "Elige desde el corazón y la alineación con tus valores reales, no desde el miedo o la duda.",
+                horoscopo: "Géminis y Libra se encontrarán en una encrucijada afectiva que exige honestidad brutal."
+            },
+            {
+                num: "ARCANO VII",
+                name: "EL CARRO",
+                consejo: "Avanza con determinación firme. El éxito requiere mantener las riendas de tus emociones.",
+                horoscopo: "Cáncer y Aries superaréis cualquier obstáculo si mantenéis el enfoque en el objetivo."
+            },
+            {
+                num: "ARCANO VIII",
+                name: "LA FUERZA",
+                consejo: "La verdadera fuerza no es la violencia, sino la paciencia, la compasión y el autocontrol.",
+                horoscopo: "Leo dominará situaciones tensas con suavidad y elegancia. Tu calma será tu poder."
+            },
+            {
+                num: "ARCANO IX",
+                name: "EL ERMITAÑO",
+                consejo: "Tómate un tiempo a solas. Ilumina tu camino interior antes de tomar decisiones apresuradas.",
+                horoscopo: "Virgo y Capricornio encontrarán respuestas reveladoras en el silencio y la introspección."
+            },
+            {
+                num: "ARCANO X",
+                name: "LA RUEDA DE LA FORTUNA",
+                consejo: "El cambio es inevitable. Fluye con los ciclos de la vida; lo que baja pronto volverá a subir.",
+                horoscopo: "Sagitario y Acuario experimentarán giros del destino inesperados pero sumamente favorables."
+            },
+            {
+                num: "ARCANO XI",
+                name: "LA JUSTICIA",
+                consejo: "Busca la verdad y mantén el equilibrio. Tus acciones presentes cosecharán los frutos del futuro.",
+                horoscopo: "Libra y Capricornio resolverán trámites o asuntos del pasado de manera equitativa."
+            },
+            {
+                num: "ARCANO XII",
+                name: "EL COLGADO",
+                consejo: "Cambia tu perspectiva. A veces pausar y soltar el control revela soluciones mágicas.",
+                horoscopo: "Piscis aprenderá a dejar ir la prisa para permitir que las cosas se acomoden solas."
+            },
+            {
+                num: "ARCANO XIII",
+                name: "LA MUERTE",
+                consejo: "Cierra ciclos sin nostalgia. Para que florezca lo nuevo, lo viejo debe transformarse.",
+                horoscopo: "Escorpio vivirá un renacimiento personal profundo. Deja atrás viejas cargas."
+            },
+            {
+                num: "ARCANO XIV",
+                name: "LA TEMPLANZA",
+                consejo: "Mezcla tus energías con equilibrio y paciencia. La alquimia perfecta toma su tiempo.",
+                horoscopo: "Sagitario y Acuario hallarán paz integrada en sus relaciones interpersonales."
+            },
+            {
+                num: "ARCANO XV",
+                name: "EL DIABLO",
+                consejo: "Reconoce tus sombras y ataduras sin juzgarte. Tienes el poder de romper cualquier cadena.",
+                horoscopo: "Capricornio y Escorpio identificarán tentaciones o hábitos que ya no les sirven."
+            },
+            {
+                num: "ARCANO XVI",
+                name: "LA TORRE",
+                consejo: "Lo que se derrumba libera espacio para tu verdad. Abraza la revelación sin resistencia.",
+                horoscopo: "Aries y Acuario romperán con viejas estructuras limitantes de forma liberadora."
+            },
+            {
+                num: "ARCANO XVII",
+                name: "LA ESTRELLA",
+                consejo: "Mantén la fe. La luz de la inspiración y la sanación ilumina de nuevo tu horizonte.",
+                horoscopo: "Acuario y Piscis recibirán una dosis de esperanza renovada y claridad de propósito."
+            },
+            {
+                num: "ARCANO XVIII",
+                name: "LA LUNA",
+                consejo: "Navega las sombras de la incertidumbre guiándote por tu instinto. No todo es lo que parece.",
+                horoscopo: "Piscis y Cáncer deberán confiar en lo que sienten por encima de lo que ven exteriormente."
+            },
+            {
+                num: "ARCANO XIX",
+                name: "EL SOL",
+                consejo: "Brilla con toda tu luz. La alegría, la claridad y el éxito pleno te están acompañando.",
+                horoscopo: "Leo y Aries vivirán momentos de máxima energía, éxito y buena fortuna."
+            },
+            {
+                num: "ARCANO XX",
+                name: "EL JUICIO",
+                consejo: "Escucha la llamada de tu alma. Perdona el pasado y despierta a tu verdadera vocación.",
+                horoscopo: "Escorpio y Sagitario darán un salto evolutivo tras comprender una gran lección de vida."
+            },
+            {
+                num: "ARCANO XXI",
+                name: "EL MUNDO",
+                consejo: "Has completado un gran aprendizaje. Celebra tu plenitud y siéntete en armonía con el universo.",
+                horoscopo: "Tauro, Leo, Escorpio y Acuario culminarán etapas importantes con rotundo éxito."
+            }
+        ];
+
+        let currentCard = null;
+
+        // Seleccionar carta aleatoria al cargar la página
+        window.onload = function() {
+            getRandomCard();
+        };
+
+        function getRandomCard() {
+            const randomIndex = Math.floor(Math.random() * arcanos.length);
+            currentCard = arcanos[randomIndex];
+            
+            document.getElementById('cardNum').innerText = currentCard.num;
+            document.getElementById('cardTitle').innerText = currentCard.name;
+            document.getElementById('universeAdvice').innerText = currentCard.consejo;
+            
+            updateHoroscope();
+        }
+
+        function flipCard() {
+            document.getElementById('card').classList.toggle('flipped');
+        }
+
+        function updateHoroscope() {
+            if (!currentCard) return;
+            const select = document.getElementById('zodiacSelect');
+            const selectedSign = select.value;
+
+            if (selectedSign === 'todos') {
+                document.getElementById('horoscopeAdvice').innerText = currentCard.horoscopo;
+            } else {
+                document.getElementById('horoscopeAdvice').innerText = `Para ${selectedSign}: La energía de ${currentCard.name} te invita a alinear tus intenciones hoy con especial atención a tu intuición.`;
+            }
+        }
+
+        function drawNewCard(event) {
+            event.stopPropagation();
+            const cardElement = document.getElementById('card');
+            
+            // Voltear de vuelta si está girada
+            cardElement.classList.remove('flipped');
+            
+            setTimeout(() => {
+                getRandomCard();
+                cardElement.classList.add('flipped');
+            }, 400);
+        }
+    </script>
+</body>
+</html>
